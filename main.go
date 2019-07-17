@@ -52,13 +52,13 @@ func OpenDb() *gorm.DB {
 // ========================================================
 func ListAll(c *gin.Context) {
 
+	c.Header("Access-Control-Allow-Origin", "*")
+
 	db := OpenDb()
 	defer db.Close()
 
 	var heroes []Hero
 	db.Find(&heroes)
-
-	c.Header("Access-Control-Allow-Origin", "*")
 
 	c.JSON(http.StatusOK, heroes)
 }
@@ -66,6 +66,9 @@ func ListAll(c *gin.Context) {
 // ListOne - Wylistowanie jednego z tablicy
 // ========================================================
 func ListOne(c *gin.Context) {
+
+	c.Header("Access-Control-Allow-Origin", "*")
+
 	db := OpenDb()
 	defer db.Close()
 
@@ -90,12 +93,16 @@ func AddNew(c *gin.Context) {
 	ErrCheck(err)
 
 	db.Create(&newHero)
+
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.JSON(http.StatusOK, gin.H{"Status": "AddNew OK"})
 }
 
 // Update - Aktualizacja jednego hero
 // ========================================================
 func Update(c *gin.Context) {
+
+	c.Header("Access-Control-Allow-Origin", "*")
 
 	db := OpenDb()
 	defer db.Close()
@@ -125,6 +132,8 @@ func Update(c *gin.Context) {
 // ========================================================
 func DeleteOne(c *gin.Context) {
 
+	c.Header("Access-Control-Allow-Origin", "*")
+
 	db := OpenDb()
 	defer db.Close()
 
@@ -139,11 +148,26 @@ func DeleteOne(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"Status": "DeleteOne OK"})
 }
 
+func Options(c *gin.Context) {
+	if c.Request.Method != "OPTIONS" {
+		c.Next()
+	} else {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "authorization, origin, content-type, accept")
+		c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
+		c.Header("Content-Type", "application/json")
+		c.AbortWithStatus(http.StatusOK)
+	}
+}
+
 // MAIN()
 // ========================================================
 func main() {
 
 	r := gin.Default()
+
+	r.Use(Options)
 
 	r.GET("/api/v1/heroes", ListAll)
 	r.GET("/api/v1/heroes/:id", ListOne)
