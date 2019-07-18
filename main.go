@@ -18,12 +18,6 @@ type Hero struct {
 	Desc string `gorm:"not null" form:"Desc" 				json:"Desc"`
 }
 
-// enableCors - pozwala na pracę lokalną front i backend apis
-// ========================================================
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-}
-
 // ErrCheck - obsługa błedów
 // ========================================================
 func ErrCheck(errNr error) {
@@ -118,7 +112,7 @@ func Update(c *gin.Context) {
 	ErrCheck(err)
 
 	result := Hero{
-		ID:   hero.ID,
+		ID:   newHero.ID,
 		Name: newHero.Name,
 		Desc: newHero.Desc,
 	}
@@ -148,6 +142,8 @@ func DeleteOne(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"Status": "DeleteOne OK"})
 }
 
+// Options - Obsługa request'u OPTIONS (CORS)
+// ========================================================
 func Options(c *gin.Context) {
 	if c.Request.Method != "OPTIONS" {
 		c.Next()
