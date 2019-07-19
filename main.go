@@ -46,8 +46,6 @@ func OpenDb() *gorm.DB {
 // ========================================================
 func ListAll(c *gin.Context) {
 
-	c.Header("Access-Control-Allow-Origin", "*")
-
 	db := OpenDb()
 	defer db.Close()
 
@@ -60,8 +58,6 @@ func ListAll(c *gin.Context) {
 // ListOne - Wylistowanie jednego z tablicy
 // ========================================================
 func ListOne(c *gin.Context) {
-
-	c.Header("Access-Control-Allow-Origin", "*")
 
 	db := OpenDb()
 	defer db.Close()
@@ -88,15 +84,12 @@ func AddNew(c *gin.Context) {
 
 	db.Create(&newHero)
 
-	c.Header("Access-Control-Allow-Origin", "*")
 	c.JSON(http.StatusOK, gin.H{"Status": "AddNew OK"})
 }
 
 // Update - Aktualizacja jednego hero
 // ========================================================
 func Update(c *gin.Context) {
-
-	c.Header("Access-Control-Allow-Origin", "*")
 
 	db := OpenDb()
 	defer db.Close()
@@ -125,8 +118,6 @@ func Update(c *gin.Context) {
 // DeleteOne - Usunięcie jednego hero
 // ========================================================
 func DeleteOne(c *gin.Context) {
-
-	c.Header("Access-Control-Allow-Origin", "*")
 
 	db := OpenDb()
 	defer db.Close()
