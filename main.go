@@ -14,8 +14,8 @@ import (
 // ========================================================
 type Hero struct {
 	ID   int    `gorm:"AUTO_INCREMENT" form:"ID" 		json:"ID"`
-	Name string `gorm:"not null" form:"Name" 				json:"Name"`
-	Desc string `gorm:"not null" form:"Desc" 				json:"Desc"`
+	Name string `gorm:"not null" form:"Name" 			json:"Name"`
+	Desc string `gorm:"not null" form:"Desc" 			json:"Desc"`
 }
 
 // ErrCheck - obsługa błedów
@@ -162,14 +162,23 @@ func Options(c *gin.Context) {
 func main() {
 
 	r := gin.Default()
-
 	r.Use(Options)
 
-	r.GET("/api/v1/heroes", ListAll)
-	r.GET("/api/v1/heroes/:id", ListOne)
-	r.POST("/api/v1/heroes", AddNew)
-	r.PUT("/api/v1/heroes/:id", Update)
-	r.DELETE("/api/v1/heroes/:id", DeleteOne)
+	r.LoadHTMLGlob("dist/*.html")
+	r.StaticFS("/css", http.Dir("dist/css"))
+	r.StaticFS("/js", http.Dir("dist/js"))
+	r.StaticFS("/img", http.Dir("dist/img"))
+	r.StaticFile("/", "dist/index.html")
+	r.StaticFile("favicon.ico", "dist/img/favicon.ico")
+
+	api := r.Group("/api/v1")
+	{
+		api.GET("/heroes", ListAll)
+		api.GET("/heroes/:id", ListOne)
+		api.POST("/heroes", AddNew)
+		api.PUT("/heroes/:id", Update)
+		api.DELETE("/heroes/:id", DeleteOne)
+	}
 
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8090")
