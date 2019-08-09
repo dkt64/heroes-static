@@ -164,12 +164,12 @@ func main() {
 	r := gin.Default()
 	r.Use(Options)
 
-	r.LoadHTMLGlob("dist/*.html")
-	r.StaticFS("/css", http.Dir("dist/css"))
-	r.StaticFS("/js", http.Dir("dist/js"))
-	r.StaticFS("/img", http.Dir("dist/img"))
-	r.StaticFile("/", "dist/index.html")
-	r.StaticFile("favicon.ico", "dist/img/favicon.ico")
+	r.LoadHTMLGlob("./dist/*.html")
+	r.StaticFS("/css", http.Dir("./dist/css"))
+	r.StaticFS("/js", http.Dir("./dist/js"))
+	r.StaticFS("/img", http.Dir("./dist/img"))
+	r.StaticFile("/", "./dist/index.html")
+	r.StaticFile("favicon.ico", "./dist/img/favicon.ico")
 
 	api := r.Group("/api/v1")
 	{
