@@ -6,6 +6,6 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
-ENTRYPOINT ["heroes-static"]
+CMD ["heroes-static"]
 
 EXPOSE 8090
