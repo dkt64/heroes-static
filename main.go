@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/dkt64/baza"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // Hero - Moja struktura
@@ -26,29 +25,13 @@ func ErrCheck(errNr error) {
 	}
 }
 
-// OpenDb - otworzenie bazy
-// ========================================================
-func OpenDb() *gorm.DB {
-
-	db, err := gorm.Open("sqlite3", "./data.db")
-	ErrCheck(err)
-
-	// Jeżeli jeszcze nie utworzona to utworzyć
-	if !db.HasTable(&Hero{}) {
-		db.CreateTable(&Hero{})
-		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&Hero{})
-	}
-
-	return db
-}
-
 // ListAll - Wylistowanie wszystkich z tablicy
 // ========================================================
 func ListAll(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := OpenDb()
+	db := baza.Open(Hero{}, "./data.db")
 	defer db.Close()
 
 	var heroes []Hero
@@ -63,7 +46,7 @@ func ListOne(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := OpenDb()
+	db := baza.Open(Hero{}, "./data.db")
 	defer db.Close()
 
 	nr, err := strconv.Atoi(c.Param("id"))
@@ -79,7 +62,7 @@ func ListOne(c *gin.Context) {
 // ========================================================
 func AddNew(c *gin.Context) {
 
-	db := OpenDb()
+	db := baza.Open(Hero{}, "./data.db")
 	defer db.Close()
 
 	var newHero Hero
@@ -98,7 +81,7 @@ func Update(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := OpenDb()
+	db := baza.Open(Hero{}, "./data.db")
 	defer db.Close()
 
 	nr, err := strconv.Atoi(c.Param("id"))
@@ -128,7 +111,7 @@ func DeleteOne(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := OpenDb()
+	db := baza.Open(Hero{}, "./data.db")
 	defer db.Close()
 
 	nr, err := strconv.Atoi(c.Param("id"))
