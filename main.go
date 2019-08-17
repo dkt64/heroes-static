@@ -12,10 +12,16 @@ import (
 // Hero - Moja struktura
 // ========================================================
 type Hero struct {
-	ID   int    `gorm:"AUTO_INCREMENT" form:"ID" 		json:"ID"`
-	Name string `gorm:"not null" form:"Name" 			json:"Name"`
-	Desc string `gorm:"not null" form:"Desc" 			json:"Desc"`
+	ID   int    `gorm:"AUTO_INCREMENT" form:"ID" json:"ID"`
+	Name string `gorm:"not null" form:"Name" json:"Name"`
+	Desc string `gorm:"not null" form:"Desc" json:"Desc"`
 }
+
+// type Hero struct {
+// 	ID   int
+// 	Name string
+// 	Desc string
+// }
 
 // ErrCheck - obsługa błedów
 // ========================================================
@@ -31,11 +37,8 @@ func ListAll(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := baza.Open(Hero{}, "./data.db")
-	defer db.Close()
-
 	var heroes []Hero
-	db.Find(&heroes)
+	baza.GetAllRecords(&heroes)
 
 	c.JSON(http.StatusOK, heroes)
 }
@@ -46,14 +49,11 @@ func ListOne(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := baza.Open(Hero{}, "./data.db")
-	defer db.Close()
-
 	nr, err := strconv.Atoi(c.Param("id"))
 	ErrCheck(err)
 
 	var hero Hero
-	db.First(&hero, nr)
+	baza.GetOneRecord(&hero, nr)
 
 	c.JSON(http.StatusOK, hero)
 }
@@ -62,17 +62,20 @@ func ListOne(c *gin.Context) {
 // ========================================================
 func AddNew(c *gin.Context) {
 
-	db := baza.Open(Hero{}, "./data.db")
-	defer db.Close()
+	c.Header("Access-Control-Allow-Origin", "*")
 
 	var newHero Hero
 	err := c.BindJSON(&newHero)
 	ErrCheck(err)
 
-	db.Create(&newHero)
+	baza.AddNewRecord(&newHero)
 
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.JSON(http.StatusOK, gin.H{"Status": "AddNew OK"})
+	var heroes []Hero
+	baza.GetAllRecords(&heroes)
+
+	c.JSON(http.StatusOK, heroes)
+
+	// c.JSON(http.StatusOK, gin.H{"Status": "AddNew OK"})
 }
 
 // Update - Aktualizacja jednego hero
@@ -81,26 +84,11 @@ func Update(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := baza.Open(Hero{}, "./data.db")
-	defer db.Close()
-
-	nr, err := strconv.Atoi(c.Param("id"))
-	ErrCheck(err)
-
 	var hero Hero
-	db.First(&hero, nr)
-
-	var newHero Hero
-	err = c.BindJSON(&newHero)
+	err := c.BindJSON(&hero)
 	ErrCheck(err)
 
-	result := Hero{
-		ID:   newHero.ID,
-		Name: newHero.Name,
-		Desc: newHero.Desc,
-	}
-
-	db.Save(&result)
+	baza.UpdateRecord(&hero)
 
 	c.JSON(http.StatusOK, gin.H{"Status": "Update OK"})
 }
@@ -111,18 +99,19 @@ func DeleteOne(c *gin.Context) {
 
 	c.Header("Access-Control-Allow-Origin", "*")
 
-	db := baza.Open(Hero{}, "./data.db")
-	defer db.Close()
-
 	nr, err := strconv.Atoi(c.Param("id"))
 	ErrCheck(err)
 
 	var hero Hero
-	db.First(&hero, nr)
+	baza.GetOneRecord(&hero, nr)
+	baza.DeleteRecord(&hero)
 
-	db.Delete(&hero)
+	var heroes []Hero
+	baza.GetAllRecords(&heroes)
 
-	c.JSON(http.StatusOK, gin.H{"Status": "DeleteOne OK"})
+	c.JSON(http.StatusOK, heroes)
+
+	// c.JSON(http.StatusOK, gin.H{"Status": "DeleteOne OK"})
 }
 
 // Options - Obsługa request'u OPTIONS (CORS)
@@ -143,6 +132,8 @@ func Options(c *gin.Context) {
 // MAIN()
 // ========================================================
 func main() {
+
+	baza.Init(Hero{}, "./data.db")
 
 	r := gin.Default()
 	r.Use(Options)
