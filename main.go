@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -133,7 +134,11 @@ func Options(c *gin.Context) {
 // ========================================================
 func main() {
 
-	baza.Init(Hero{}, "./data.db")
+	portNumber := flag.String("port", "8080", "Provide TCP/IP listening port. Dafault port number is 8080.")
+	baseFilename := flag.String("Database filename", "./data.db", "Provide filename for SQLite database file. Default filename is 'data.db'")
+	flag.Parse()
+
+	baza.Init(Hero{}, *baseFilename)
 
 	r := gin.Default()
 	r.Use(Options)
@@ -155,5 +160,6 @@ func main() {
 	}
 
 	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8090")
+
+	r.Run(":" + *portNumber)
 }
