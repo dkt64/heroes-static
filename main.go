@@ -144,11 +144,15 @@ func main() {
 	r.Use(Options)
 
 	r.LoadHTMLGlob("./dist/*.html")
+	r.LoadHTMLGlob("./dist/css/*.css")
+	r.LoadHTMLGlob("./dist/js/*.js")
+	r.LoadHTMLGlob("./dist/img/*.*")
+
 	r.StaticFS("/css", http.Dir("./dist/css"))
 	r.StaticFS("/js", http.Dir("./dist/js"))
 	r.StaticFS("/img", http.Dir("./dist/img"))
 	r.StaticFile("/", "./dist/index.html")
-	r.StaticFile("favicon.ico", "./dist/img/favicon.ico")
+	r.StaticFile("/favicon.ico", "./dist/img/favicon.ico")
 
 	api := r.Group("/api/v1")
 	{
