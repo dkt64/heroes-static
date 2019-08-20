@@ -8,4 +8,4 @@ RUN go install -v ./...
 
 CMD ["heroes-static"]
 
-EXPOSE 8090
+EXPOSE 80

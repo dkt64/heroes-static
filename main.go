@@ -134,7 +134,7 @@ func Options(c *gin.Context) {
 // ========================================================
 func main() {
 
-	portNumber := flag.String("p", "8080", "Provide TCP/IP listening port.")
+	portNumber := flag.String("p", "80", "Provide TCP/IP listening port.")
 	baseFilename := flag.String("db", "./data.db", "Provide filename for SQLite database file.")
 	flag.Parse()
 
@@ -144,9 +144,6 @@ func main() {
 	r.Use(Options)
 
 	r.LoadHTMLGlob("./dist/*.html")
-	// r.LoadHTMLGlob("./dist/css/*.css")
-	// r.LoadHTMLGlob("./dist/js/*.js")
-	// r.LoadHTMLGlob("./dist/img/*.*")
 
 	r.StaticFS("/css", http.Dir("./dist/css"))
 	r.StaticFS("/js", http.Dir("./dist/js"))
