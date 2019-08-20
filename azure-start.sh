@@ -1,2 +1,2 @@
 az.cmd group create --name BartekRG --location westeurope
-az.cmd container create --resource-group BartekRG --name heroes-app-bartek --image dkt64/heroes:1.1 --dns-name-label heroes-app-bartek --ports 80
+az.cmd container create --resource-group BartekRG --name heroes-app-bartek --image dkt64/heroes:1.2 --dns-name-label heroes-app-bartek --ports 80

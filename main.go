@@ -134,7 +134,7 @@ func Options(c *gin.Context) {
 // ========================================================
 func main() {
 
-	portNumber := flag.String("p", "8080", "Provide TCP/IP listening port.")
+	portNumber := flag.Int("p", 8080, "Provide TCP/IP listening port.")
 	baseFilename := flag.String("db", "./data.db", "Provide filename for SQLite database file.")
 	flag.Parse()
 
@@ -162,5 +162,5 @@ func main() {
 
 	// Listen and Server in 0.0.0.0:8080
 
-	r.Run(":" + *portNumber)
+	r.Run(":" + strconv.Itoa(*portNumber))
 }
