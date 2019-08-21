@@ -1,0 +1,1 @@
+az.cmd container delete --resource-group BartekRG --name heroes-app-bartek
